@@ -43,6 +43,8 @@ type DependencyDetail struct {
 	Description  string          `json:"description"`
 	VersionRange *string         `json:"versionRange,omitempty"`
 	Links        *map[string]any `json:"_links,omitempty"`
+	Tag          string          `json:"-"`
+	Selected     bool            `json:"-"`
 }
 
 // ConfigOption represents a configuration option with multiple values

@@ -56,64 +56,59 @@ build tool, Java version, and other project metadata.`,
 			SpringBootVersion: initializr.BootVersion.Default,
 		}
 
-		title := "Project"
-		projectInitializr.Project = selector.New(title, []string{"maven-project", "gradle-project-kotlin", "gradle-project"}).Run()
-		fmt.Printf("%s: %s\n", core.QuestionStyle.Render(title), projectInitializr.Project)
+		if true {
 
-		title = "Language"
-		projectInitializr.Language = selector.New(title, initializr.GetLanguages()).Run()
-		fmt.Printf("%s: %s\n", core.QuestionStyle.Render(title), projectInitializr.Language)
+			title := "Project"
+			projectInitializr.Project = selector.New(title, []string{"maven-project", "gradle-project-kotlin", "gradle-project"}).Run()
+			fmt.Printf("%s: %s\n", core.QuestionStyle.Render(title), projectInitializr.Project)
 
-		title = "Spring Boot Version"
-		projectInitializr.SpringBootVersion = selector.New(title, initializr.GetBootVersions()).Run()
-		fmt.Printf("%s: %s\n", core.QuestionStyle.Render(title), projectInitializr.SpringBootVersion)
+			title = "Language"
+			projectInitializr.Language = selector.New(title, initializr.GetLanguages()).Run()
+			fmt.Printf("%s: %s\n", core.QuestionStyle.Render(title), projectInitializr.Language)
 
-		title = "Group"
-		projectMetadata.GroupID = inputtext.New(title, initializr.GroupID.Default).Run()
-		fmt.Printf("\n%s\n", core.QuestionStyle.Render("Metadata: "))
-		fmt.Printf("  %s: %s\n", core.LogoStyle.Render(title), projectMetadata.GroupID)
+			title = "Spring Boot Version"
+			projectInitializr.SpringBootVersion = selector.New(title, initializr.GetBootVersions()).Run()
+			fmt.Printf("%s: %s\n", core.QuestionStyle.Render(title), projectInitializr.SpringBootVersion)
 
-		title = "Artifact"
-		projectMetadata.ArtifactID = inputtext.New(title, initializr.ArtifactID.Default).Run()
-		fmt.Printf("  %s: %s\n", core.LogoStyle.Render(title), projectMetadata.ArtifactID)
+			title = "Group"
+			projectMetadata.GroupID = inputtext.New(title, initializr.GroupID.Default).Run()
+			fmt.Printf("\n%s\n", core.QuestionStyle.Render("Metadata: "))
+			fmt.Printf("  %s: %s\n", core.LogoStyle.Render(title), projectMetadata.GroupID)
 
-		title = "Name"
-		projectMetadata.Name = inputtext.New(title, initializr.ArtifactID.Default).Run()
-		fmt.Printf("  %s: %s\n", core.LogoStyle.Render(title), projectMetadata.Name)
+			title = "Artifact"
+			projectMetadata.ArtifactID = inputtext.New(title, initializr.ArtifactID.Default).Run()
+			fmt.Printf("  %s: %s\n", core.LogoStyle.Render(title), projectMetadata.ArtifactID)
 
-		title = "Description"
-		projectMetadata.Description = inputtext.New(title, initializr.Description.Default).Run()
-		fmt.Printf("  %s: %s\n", core.LogoStyle.Render(title), projectMetadata.Description)
+			title = "Name"
+			projectMetadata.Name = inputtext.New(title, initializr.ArtifactID.Default).Run()
+			fmt.Printf("  %s: %s\n", core.LogoStyle.Render(title), projectMetadata.Name)
 
-		title = "Package name"
-		projectMetadata.PackageName = inputtext.New(title, initializr.PackageName.Default).Run()
-		fmt.Printf("  %s: %s\n", core.LogoStyle.Render(title), projectMetadata.PackageName)
+			title = "Description"
+			projectMetadata.Description = inputtext.New(title, initializr.Description.Default).Run()
+			fmt.Printf("  %s: %s\n", core.LogoStyle.Render(title), projectMetadata.Description)
 
-		title = "Packaging"
-		projectMetadata.Packaging = selector.New(title, initializr.GetPackagingTypes()).Run()
-		fmt.Printf("  %s: %s\n", core.LogoStyle.Render(title), projectMetadata.Packaging)
+			title = "Package name"
+			projectMetadata.PackageName = inputtext.New(title, initializr.PackageName.Default).Run()
+			fmt.Printf("  %s: %s\n", core.LogoStyle.Render(title), projectMetadata.PackageName)
 
-		title = "Configuration"
-		projectMetadata.Configuration = selector.New(title, initializr.GetConfigurationFileFormat()).Run()
-		fmt.Printf("  %s: %s\n", core.LogoStyle.Render(title), projectMetadata.Configuration)
+			title = "Packaging"
+			projectMetadata.Packaging = selector.New(title, initializr.GetPackagingTypes()).Run()
+			fmt.Printf("  %s: %s\n", core.LogoStyle.Render(title), projectMetadata.Packaging)
 
-		title = "Java"
-		projectMetadata.JavaVersion = selector.New(title, initializr.GetJavaVersions()).Run()
-		fmt.Printf("  %s: %s\n", core.LogoStyle.Render(title), projectMetadata.JavaVersion)
+			title = "Configuration"
+			projectMetadata.Configuration = selector.New(title, initializr.GetConfigurationFileFormat()).Run()
+			fmt.Printf("  %s: %s\n", core.LogoStyle.Render(title), projectMetadata.Configuration)
+
+			title = "Java"
+			projectMetadata.JavaVersion = selector.New(title, initializr.GetJavaVersions()).Run()
+			fmt.Printf("  %s: %s\n", core.LogoStyle.Render(title), projectMetadata.JavaVersion)
+
+		}
 
 		projectInitializr.ProjectMetadata = projectMetadata
 
 		if false {
-			dependencies := []listview.ItemType{}
-
-			for _, dependencyGroup := range initializr.Dependencies.Values {
-				// tag := dependencyGroup.Name
-				for _, detail := range dependencyGroup.Values {
-					dependencies = append(dependencies, listview.NewItem(detail))
-				}
-			}
-
-			listview.New(dependencies).Run()
+			listview.New(initializr.Dependencies.Values).Run()
 		}
 
 		if err := projectInitializr.Starter(); err != nil {
