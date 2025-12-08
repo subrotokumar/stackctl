@@ -87,7 +87,7 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.Type {
-		case tea.KeyCtrlC:
+		case tea.KeyCtrlC, tea.KeyEnter, tea.KeyEsc:
 			return m, tea.Quit
 		case tea.KeySpace:
 			index := m.list.GlobalIndex()
