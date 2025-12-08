@@ -22,21 +22,19 @@ var successStyle = lipgloss.NewStyle().
 func (pi ProjectInitializr) Starter() error {
 	zipFile := pi.ProjectMetadata.Name + ".zip"
 
-	// 1️⃣ Download file
 	err := pi.downloadStarterZip()
 	if err != nil {
 		return err
 	}
-	fmt.Println("> Downloaded:", zipFile)
+	fmt.Println("⌀ Downloaded:", zipFile)
 
-	// 2️⃣ Extract
 	err = unzip(zipFile, "./")
 	if err != nil {
 		return err
 	}
-	fmt.Println("> Extracted successfully")
+	fmt.Println("⌀ Extracted successfully")
+	fmt.Println()
 
-	// 3️⃣ Delete ZIP
 	err = os.Remove(zipFile)
 	if err != nil {
 		return err
@@ -111,7 +109,7 @@ func (pi ProjectInitializr) downloadStarterZip() error {
 	}
 	defer resp.Body.Close()
 
-	fmt.Println("> Status:", resp.StatusCode)
+	fmt.Println("⌀ Status:", resp.StatusCode)
 	if resp.StatusCode != 200 {
 		return fmt.Errorf("non-200 response: %d", resp.StatusCode)
 	}

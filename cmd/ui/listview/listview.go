@@ -12,6 +12,9 @@ import (
 )
 
 var docStyle = lipgloss.NewStyle().Margin(1, 2)
+var selected core.Set[string] = make(core.Set[string])
+
+const SELECTOR_INDICATOR string = "✅"
 
 type ItemType = item
 
@@ -30,8 +33,8 @@ func NewItem(param spring.DependencyDetail) item {
 
 func (i item) Title() string {
 	tag := "(" + core.GreyStyle.Render(i.Tag) + ")"
-	if i.DependencyDetail.Selected {
-		return fmt.Sprintf("%s  %s", core.SelectedStyle.Render(i.title), core.GreyStyle.Render(tag))
+	if selected.Has(i.DependencyDetail.ID) {
+		return fmt.Sprintf("%s %s  %s", SELECTOR_INDICATOR, i.FilterValue(), core.GreyStyle.Render(tag))
 	}
 	return fmt.Sprintf("%s  %s", i.title, core.GreyStyle.Render(tag))
 }
@@ -48,9 +51,9 @@ func (i item) FilterValue() string { return i.title }
 func (i item) Id() string          { return i.ID }
 
 type model struct {
-	list     list.Model
-	selected core.Set[string]
-	options  []spring.DependencyDetail
+	list list.Model
+
+	options []spring.DependencyDetail
 }
 
 func New(options []spring.DependencyGroup) model {
@@ -72,7 +75,7 @@ func New(options []spring.DependencyGroup) model {
 
 	m.list = list.New(inputOptions, list.NewDefaultDelegate(), 0, 0)
 	m.list.Title = "Dependencies"
-	m.selected = make(core.Set[string])
+	selected = make(core.Set[string])
 	return m
 }
 
@@ -90,12 +93,11 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			index := m.list.GlobalIndex()
 			m.options[index].Selected = !m.options[index].Selected
 			if m.options[index].Selected {
-				m.selected.Add(m.options[index].ID)
+				selected.Add(m.options[index].ID)
 			} else {
-				m.selected.Remove(m.options[index].ID)
+				selected.Remove(m.options[index].ID)
 			}
 			m.list.SetItem(index, NewItem(m.options[index]))
-			return m, nil
 		}
 	case tea.WindowSizeMsg:
 		h, v := docStyle.GetFrameSize()
@@ -117,5 +119,5 @@ func (m model) Run() []string {
 		os.Exit(1)
 	}
 
-	return m.selected.ToSlice()
+	return selected.ToSlice()
 }
