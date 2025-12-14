@@ -118,8 +118,15 @@ func (pi ProjectInitializr) downloadStarterZip() error {
 	defer resp.Body.Close()
 
 	fmt.Println("⌀ Status:", resp.StatusCode)
-	if resp.StatusCode != 200 {
-		return fmt.Errorf("non-200 response: %d", resp.StatusCode)
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		// Read response body as string
+		bodyBytes, readErr := io.ReadAll(resp.Body)
+		if readErr != nil {
+			return fmt.Errorf("non-2xx response: %d; failed to read body: %v", resp.StatusCode, readErr)
+		}
+		bodyStr := string(bodyBytes)
+		return fmt.Errorf("non-2xx response: %d; body: %s", resp.StatusCode, bodyStr)
 	}
 
 	out, err := os.Create(zipFile)
