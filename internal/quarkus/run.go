@@ -20,7 +20,7 @@ func Run() (QuarkusStarterResponse, error) {
 		Group:       "com.acme",
 		Artifact:    "code-with-quarkus",
 		Version:     "1.0.0-SNAPSHOT",
-		JavaVersion: []string{"21", "7"},
+		JavaVersion: []string{"21", "17"},
 		BuildTool:   []string{"Maven", "Grade", "Grade With Kotlin DSL"},
 		StarterCode: true,
 		Extensions:  extensions,
@@ -56,7 +56,7 @@ func fetch(ctx context.Context) ([]Extension, []Preset, error) {
 }
 
 func GetExtensions() ([]Extension, error) {
-	res, err := http.Get(QuarkusInitializrURL + "/api/extensions")
+	res, err := http.Get(QuarkusInitializrURL + "/api/extensions?platformOnly=false")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error fetching metadata: %v\n", err)
 		os.Exit(1)

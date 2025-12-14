@@ -10,4 +10,4 @@ tasks:
     silent: true
     cmds:
       - go build -ldflags "-s -w"
-      - upx ./springx
+      - upx ./stackctl

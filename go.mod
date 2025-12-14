@@ -1,4 +1,4 @@
-module github.com/subrotokumar/springx
+module github.com/subrotokumar/stackctl
 
 go 1.25.4
 

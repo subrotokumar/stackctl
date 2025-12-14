@@ -6,21 +6,22 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/subrotokumar/springx/cmd/core"
-	"github.com/subrotokumar/springx/cmd/ui/inputtext"
-	"github.com/subrotokumar/springx/cmd/ui/listview"
-	"github.com/subrotokumar/springx/cmd/ui/selector"
-	"github.com/subrotokumar/springx/internal/quarkus"
-	"github.com/subrotokumar/springx/internal/spring"
+	"github.com/subrotokumar/stackctl/cmd/core"
+	"github.com/subrotokumar/stackctl/cmd/ui/extension"
+	"github.com/subrotokumar/stackctl/cmd/ui/inputtext"
+	"github.com/subrotokumar/stackctl/cmd/ui/listview"
+	"github.com/subrotokumar/stackctl/cmd/ui/selector"
+	"github.com/subrotokumar/stackctl/internal/quarkus"
+	"github.com/subrotokumar/stackctl/internal/spring"
 )
 
 const logo = `
- ____             _
-/ ___| _ __  _ __(_)_ __   __ ___  __
-\___ \| '_ \| '__| | '_ \ / _‛ \ \/ /
- ___) | |_) | |  | | | | | (_| |>  <
-|____/| .__/|_|  |_|_| |_|\__, /_/\_\
-      |_|                  |___/
+  _________ __                 __           __  .__   
+ /   _____//  |______    ____ |  | __ _____/  |_|  |  
+ \_____  \\   __\__  \ _/ ___\|  |/ // ___\   __\  |  
+ /        \|  |  / __ \\  \___|    <\  \___|  | |  |__
+/_______  /|__| (____  /\___  >__|_ \\___  >__| |____/
+        \/           \/     \/     \/    \/           
 `
 
 type ProjectType string
@@ -36,7 +37,9 @@ build tool, Java version, and other project metadata.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// reader := bufio.NewReader(os.Stdin)
 		fmt.Println()
-		fmt.Println(core.LogoStyle.Render(logo))
+		if core.ShowLogo {
+			fmt.Println(core.LogoStyle.Render(logo))
+		}
 
 		project := "spring"
 		if len(args) == 1 {
@@ -44,8 +47,10 @@ build tool, Java version, and other project metadata.`,
 		}
 		switch project {
 		case "spring", "springboot":
+			fmt.Println(core.GreenStyle.Render("SPRING"))
 			SpringStarter(cmd, args)
 		case "quarkus":
+			fmt.Println(core.GreenStyle.Render("QUARKUS"))
 			QuarkusStarter(cmd, args)
 		}
 	},
@@ -74,7 +79,7 @@ func SpringStarter(cmd *cobra.Command, args []string) {
 		SpringBootVersion: initializr.BootVersion.Default,
 	}
 
-	if true {
+	if core.EnableMetadataInput {
 
 		title := "Project"
 		projectInitializr.Project = selector.New(title, []string{"maven-project", "gradle-project-kotlin", "gradle-project"}).Run()
@@ -124,7 +129,7 @@ func SpringStarter(cmd *cobra.Command, args []string) {
 	}
 
 	projectInitializr.ProjectMetadata = projectMetadata
-	if true {
+	if core.EnableDependencySelection {
 		projectInitializr.Dependencies = listview.New(initializr.Dependencies.Values).Run()
 		fmt.Printf("\n%s\n", core.QuestionStyle.Render("Selected Dependencies:"))
 		for _, dep := range projectInitializr.Dependencies {
@@ -132,7 +137,7 @@ func SpringStarter(cmd *cobra.Command, args []string) {
 		}
 	}
 
-	if err := projectInitializr.Starter(); err != nil {
+	if err := projectInitializr.Generate(); err != nil {
 		panic(err)
 	}
 }
@@ -144,6 +149,7 @@ func QuarkusStarter(cmd *cobra.Command, args []string) {
 		os.Exit(0)
 	}
 
+	ext := []string{}
 	initializr := quarkus.ProjectInitializr{
 		Group:       starter.Group,
 		Artifact:    starter.Artifact,
@@ -151,11 +157,11 @@ func QuarkusStarter(cmd *cobra.Command, args []string) {
 		Version:     starter.Version,
 		JavaVersion: starter.JavaVersion[0],
 		StarterCode: true,
-		Extension:   []string{},
+		Extension:   ext,
 	}
 	title := ""
 
-	if true {
+	if core.EnableMetadataInput {
 
 		title = "Group"
 		initializr.Group = inputtext.New(title, initializr.Group).Run()
@@ -163,7 +169,7 @@ func QuarkusStarter(cmd *cobra.Command, args []string) {
 		fmt.Printf("  %s: %s\n", core.LogoStyle.Render(title), initializr.Group)
 
 		title = "Artifact ID"
-		initializr.Group = inputtext.New(title, initializr.Artifact).Run()
+		initializr.Artifact = inputtext.New(title, initializr.Artifact).Run()
 		fmt.Printf("  %s: %s\n", core.LogoStyle.Render(title), initializr.Artifact)
 
 		title = "Build Tool"
@@ -175,7 +181,7 @@ func QuarkusStarter(cmd *cobra.Command, args []string) {
 		fmt.Printf("  %s: %s\n", core.LogoStyle.Render(title), initializr.Version)
 
 		title = "Java Version"
-		initializr.JavaVersion = inputtext.New(title, starter.JavaVersion[0]).Run()
+		initializr.JavaVersion = selector.New(title, starter.JavaVersion).Run()
 		fmt.Printf("  %s: %s\n", core.LogoStyle.Render(title), initializr.JavaVersion)
 
 		title = "Starter Code"
@@ -186,6 +192,18 @@ func QuarkusStarter(cmd *cobra.Command, args []string) {
 		} else {
 			initializr.StarterCode = false
 		}
+	}
+
+	if core.EnableExtensionSelection {
+		selectedExtension := extension.New(starter.Extensions).Run()
+		initializr.Extension = selectedExtension
+		fmt.Printf("\n%s\n", core.QuestionStyle.Render("Selected Dependencies:"))
+		for _, dep := range selectedExtension {
+			fmt.Printf("  - %s\n", dep)
+		}
+	}
+	if err := initializr.Generate(); err != nil {
+		panic(err)
 	}
 }
 

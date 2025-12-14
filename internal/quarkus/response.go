@@ -24,6 +24,7 @@ type Extension struct {
 	Order                int      `json:"order"`
 	Platform             bool     `json:"platform"`
 	BOM                  string   `json:"bom"`
+	Selected             bool     `json:"-"`
 }
 
 type QuarkusStarterResponse struct {

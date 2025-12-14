@@ -3,12 +3,13 @@ package extension
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/subrotokumar/springx/cmd/core"
-	"github.com/subrotokumar/springx/internal/spring"
+	"github.com/subrotokumar/stackctl/cmd/core"
+	"github.com/subrotokumar/stackctl/internal/quarkus"
 )
 
 var docStyle = lipgloss.NewStyle().Margin(1, 2)
@@ -19,54 +20,69 @@ const SELECTOR_INDICATOR string = "✅"
 type ItemType = item
 
 type item struct {
-	*spring.DependencyDetail
+	*quarkus.Extension
 	title, desc string
 }
 
-func NewItem(param spring.DependencyDetail) item {
+func NewItem(param quarkus.Extension) item {
 	return item{
-		title:            param.Name,
-		desc:             param.Description,
-		DependencyDetail: &param,
+		title:     param.Name,
+		desc:      param.Description,
+		Extension: &param,
 	}
 }
 
 func (i item) Title() string {
-	tag := "(" + core.GreyStyle.Render(i.Tag) + ")"
-	if selected.Has(i.DependencyDetail.ID) {
-		return fmt.Sprintf("%s %s  %s", SELECTOR_INDICATOR, i.FilterValue(), core.GreyStyle.Render(tag))
+	id := core.BlueStyle.Render(fmt.Sprintf("[%s]", core.BlueStyle.Render(strings.Split(i.ID, ":")[1])))
+
+	isSelected := ""
+	platform := ""
+
+	if i.Platform {
+		platform = core.SelectedStyle.Render(" ※ ")
 	}
-	return fmt.Sprintf("%s  %s", i.title, core.GreyStyle.Render(tag))
+
+	if selected.Has(i.ID) {
+		isSelected = SELECTOR_INDICATOR + " "
+	}
+
+	tag := ""
+	for _, val := range i.Tags {
+		switch val {
+		case "with:starter-code":
+			tag = fmt.Sprintf("%s %s ", tag, core.StartedCode.Render("Starter Code"))
+		case "status:stable":
+			tag = tag + ""
+		case "status:deprecated":
+			tag = fmt.Sprintf("%s %s ", tag, core.DeprecatedCode.Render("Deprecated"))
+		case "status:preview":
+			tag = fmt.Sprintf("%s %s ", tag, core.PreviewCode.Render("Preview"))
+		case "status:experimental":
+			tag = fmt.Sprintf("%s %s ", tag, core.ExperimentalCode.Render("Experimental"))
+		default:
+		}
+	}
+
+	return fmt.Sprintf("%s%s %s%s%s", isSelected, i.Name, id, platform, tag)
 }
 
 func (i item) Description() string {
-	if i.DependencyDetail.VersionRange != nil {
-		versionRange := *i.DependencyDetail.VersionRange
-		return fmt.Sprintf("%s %s", i.desc, core.RedStyle.Render(versionRange))
-	}
 	return i.desc
 }
 
-func (i item) FilterValue() string { return i.title }
-func (i item) Id() string          { return i.ID }
+func (i item) FilterValue() string {
+	return i.Name
+}
+func (i item) Id() string { return i.ID }
 
 type model struct {
 	list list.Model
 
-	options []spring.DependencyDetail
+	options []quarkus.Extension
 }
 
-func New(options []spring.DependencyGroup) model {
-	detailList := []spring.DependencyDetail{}
-
-	for _, dependencyGroup := range options {
-		tag := dependencyGroup.Name
-		for _, detail := range dependencyGroup.Values {
-			detail.Tag = tag
-			detailList = append(detailList, detail)
-		}
-	}
-	m := model{options: detailList}
+func New(options []quarkus.Extension) model {
+	m := model{options: options}
 	inputOptions := []list.Item{}
 
 	for _, val := range m.options {

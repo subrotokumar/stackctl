@@ -1,4 +1,4 @@
-package spring
+package quarkus
 
 import (
 	"archive/zip"
@@ -11,16 +11,33 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
+	"github.com/subrotokumar/stackctl/cmd/core"
 )
 
-var Url = "https://start.spring.io/starter.zip?type=maven-project&language=java&bootVersion=4.0.0&baseDir=demo&groupId=com.example&artifactId=demo&name=demo&description=Demo%20project%20for%20Spring%20Boot&packageName=com.example.demo&packaging=jar&javaVersion=17"
+const (
+	ParamGroup       = "g"
+	ParamArtifact    = "a"
+	ParamBuildTool   = "b"
+	ParamExtension   = "e"
+	ParamVersion     = "v"
+	ParamJavaVersion = "j"
+	ParamCN          = "cn"
+)
 
-var successStyle = lipgloss.NewStyle().
-	Bold(true).
-	Foreground(lipgloss.Color("#00FF5F"))
+var (
+	successStyle = lipgloss.NewStyle().
+			Bold(true).
+			Foreground(lipgloss.Color("#00FF5F"))
 
-func (pi ProjectInitializr) Starter() error {
-	zipFile := pi.ProjectMetadata.Name + ".zip"
+	keyStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#5FD7FF"))
+
+	valueStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#FFD75F"))
+)
+
+func (pi ProjectInitializr) Generate() error {
+	zipFile := pi.Artifact + ".zip"
 
 	err := pi.downloadStarterZip()
 	if err != nil {
@@ -47,23 +64,18 @@ func (pi ProjectInitializr) Starter() error {
 
 func (pi ProjectInitializr) URL() string {
 
-	base := "https://start.spring.io/starter.zip"
-	pi.SpringBootVersion = strings.ReplaceAll(pi.SpringBootVersion, " (SNAPSHOT)", "-SNAPSHOT")
+	base := "https://code.quarkus.io/d"
 
 	params := url.Values{}
-	params.Add("type", pi.Project)
-	params.Add("language", pi.Language)
-	params.Add("bootVersion", pi.SpringBootVersion)
-	params.Add("groupId", pi.ProjectMetadata.GroupID)
-	params.Add("artifactId", pi.ProjectMetadata.ArtifactID)
-	params.Add("baseDir", pi.ProjectMetadata.Name)
-	params.Add("name", pi.ProjectMetadata.Name)
-	params.Add("description", pi.ProjectMetadata.Description)
-	params.Add("packageName", pi.ProjectMetadata.PackageName)
-	params.Add("packaging", pi.ProjectMetadata.Packaging)
-	params.Add("javaVersion", pi.ProjectMetadata.JavaVersion)
-	params.Add("configurationFileFormat", strings.ToLower(pi.ProjectMetadata.Configuration))
-	params.Set("dependencies", strings.Join(pi.Dependencies, ","))
+	params.Add(ParamGroup, pi.Group)
+	params.Add(ParamArtifact, pi.Artifact)
+	params.Add(ParamBuildTool, strings.ToUpper(strings.ReplaceAll(pi.BuildTool, " ", "_")))
+	params.Add(ParamJavaVersion, pi.JavaVersion)
+	params.Add(ParamVersion, pi.Version)
+
+	for _, ext := range pi.Extension {
+		params.Add(ParamExtension, strings.ReplaceAll(ext, "io.quarkus:quarkus-", ""))
+	}
 
 	url := base + "?" + params.Encode()
 
@@ -71,14 +83,10 @@ func (pi ProjectInitializr) URL() string {
 		Bold(true).
 		Foreground(lipgloss.Color("#20ff93ff"))
 
-	keyStyle := lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#5FD7FF"))
-
-	valueStyle := lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#FFD75F"))
-
 	fmt.Println()
-	fmt.Println(titleStyle.Render("🔗 Generated Spring Initializr URL\n"))
+	fmt.Println(titleStyle.Render("🔗 Quarkus Project Generate URL :"))
+	fmt.Printf("%s\n\n", core.GreyStyle.Render(url))
+
 	fmt.Println(titleStyle.Render(base + "?"))
 	for key, values := range params {
 		for _, val := range values {
@@ -94,9 +102,9 @@ func (pi ProjectInitializr) URL() string {
 }
 
 func (pi ProjectInitializr) downloadStarterZip() error {
-	zipFile := pi.ProjectMetadata.Name + ".zip"
+	zipFile := pi.Artifact + ".zip"
 
-	req, err := http.NewRequest("POST", pi.URL(), strings.NewReader(url.Values{}.Encode()))
+	req, err := http.NewRequest("GET", pi.URL(), strings.NewReader(url.Values{}.Encode()))
 	if err != nil {
 		return err
 	}

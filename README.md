@@ -1,23 +1,30 @@
-# SpringX – Spring Initializr TUI CLI 🚀
+# Stackctl – Java Project Initializr TUI CLI 🚀
 
-A fast, interactive **Terminal User Interface (TUI)** CLI tool for generating new **Spring Boot** projects using the official **Spring Initializr** API — powered by **Go** and the beautiful **Bubble Tea** framework.
-No browser required. Just pick your project options from the terminal and bootstrap instantly! ⚡
+Stackctl is a fast, interactive Terminal User Interface (TUI) CLI for managing the entire lifecycle of Java-based projects.
+
+It goes beyond project generation by offering a stack of developer utilities — project initialization, testing, scripts, and automation — all from a clean, keyboard-first terminal experience.
+
+Powered by Go, Bubble Tea, and official framework APIs.
+
+No browser. No boilerplate. Just ship. ⚡
 
 ---
 
 ## ✨ Features
 
-* 🌀 Interactive TUI experience using Bubble Tea
-* 📦 Select:
+🚀 Project Initialization
+  - Generate new projects using official APIs
+  - Supported stacks:  
+    Spring Boot  
+    Quarkus   
+    Micronaut (planned)  
 
-  * Spring Boot version
-  * Project type (Maven/Gradle)
-  * Java version
-  * Dependencies (multi-select with search)
-* 📁 Generates ready-to-run Spring Boot project zip
-* 🛠 Download + auto-extract to project folder
-* 🔗 Uses the official Spring Initializr metadata API
-* 🧩 Keyboard-first navigation
+Configure:
+  - Build tool (Maven / Gradle)
+  - Java version
+  - Framework version 
+
+Dependencies (multi-select with search)
 
 ---
 
@@ -47,9 +54,9 @@ No browser required. Just pick your project options from the terminal and bootst
 Make sure you have Go 1.21+ installed.
 
 ```bash
-git clone https://github.com/subrotokumar/springx.git
-cd springx
-go build -o springx
+git clone https://github.com/subrotokumar/stackctl.git
+cd stackctl
+go build -o stackctl
 ```
 
 Install to PATH:
@@ -65,7 +72,7 @@ go install
 Just run:
 
 ```bash
-springx
+stackctl
 ```
 
 Follow the interactive terminal UI to configure your project.

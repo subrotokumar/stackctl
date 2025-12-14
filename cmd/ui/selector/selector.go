@@ -4,7 +4,7 @@ import (
 	"os"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/subrotokumar/springx/cmd/core"
+	"github.com/subrotokumar/stackctl/cmd/core"
 )
 
 type model struct {

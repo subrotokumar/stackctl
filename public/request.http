@@ -1,2 +1,5 @@
 ### RUN
 GET https://start.spring.io/metadata/client
+
+### Get Quarkus Extensions
+GET https://code.quarkus.io/api/extensions?platformOnly=false
