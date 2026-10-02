@@ -5,6 +5,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -78,7 +79,9 @@ func (i item) Id() string { return i.ID }
 type model struct {
 	list list.Model
 
-	options []quarkus.Extension
+	options   []quarkus.Extension
+	back      bool
+	cancelled bool
 }
 
 func New(options []quarkus.Extension) model {
@@ -91,7 +94,30 @@ func New(options []quarkus.Extension) model {
 
 	m.list = list.New(inputOptions, list.NewDefaultDelegate(), 0, 0)
 	m.list.Title = "Dependencies"
+	m.list.DisableQuitKeybindings() // we handle enter / esc / ctrl+c ourselves
+	m.list.AdditionalShortHelpKeys = func() []key.Binding {
+		return []key.Binding{
+			key.NewBinding(key.WithKeys("space"), key.WithHelp("space", "select")),
+			key.NewBinding(key.WithKeys("enter"), key.WithHelp("enter", "confirm")),
+			key.NewBinding(key.WithKeys("esc"), key.WithHelp("esc", "back")),
+		}
+	}
 	selected = make(core.Set[string])
+	return m
+}
+
+// WithSelected pre-selects the given extension IDs, so going back
+// to this step shows the earlier picks.
+func (m model) WithSelected(ids []string) model {
+	for _, id := range ids {
+		selected.Add(id)
+	}
+	for i := range m.options {
+		if selected.Has(m.options[i].ID) {
+			m.options[i].Selected = true
+			m.list.SetItem(i, NewItem(m.options[i]))
+		}
+	}
 	return m
 }
 
@@ -102,18 +128,34 @@ func (m *model) Init() tea.Cmd {
 func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		switch msg.Type {
-		case tea.KeyCtrlC, tea.KeyEnter, tea.KeyEsc:
+		if msg.Type == tea.KeyCtrlC {
+			m.cancelled = true
 			return m, tea.Quit
-		case tea.KeySpace:
-			index := m.list.GlobalIndex()
-			m.options[index].Selected = !m.options[index].Selected
-			if m.options[index].Selected {
-				selected.Add(m.options[index].ID)
-			} else {
-				selected.Remove(m.options[index].ID)
+		}
+
+		// While the user is typing a filter, enter/esc/space belong to the list.
+		if m.list.FilterState() != list.Filtering {
+			switch msg.Type {
+			case tea.KeyEnter:
+				return m, tea.Quit
+
+			case tea.KeyEsc:
+				// With a filter applied, esc falls through and clears it.
+				if m.list.FilterState() == list.Unfiltered {
+					m.back = true
+					return m, tea.Quit
+				}
+
+			case tea.KeySpace:
+				index := m.list.GlobalIndex()
+				m.options[index].Selected = !m.options[index].Selected
+				if m.options[index].Selected {
+					selected.Add(m.options[index].ID)
+				} else {
+					selected.Remove(m.options[index].ID)
+				}
+				m.list.SetItem(index, NewItem(m.options[index]))
 			}
-			m.list.SetItem(index, NewItem(m.options[index]))
 		}
 	case tea.WindowSizeMsg:
 		h, v := docStyle.GetFrameSize()
@@ -136,4 +178,18 @@ func (m model) Run() []string {
 	}
 
 	return selected.ToSlice()
+}
+
+// RunWithBack returns the selected extension IDs, and back=true if the
+// user pressed esc (with no filter active). Ctrl+C exits the program.
+func (m model) RunWithBack() ([]string, bool) {
+	p := tea.NewProgram(&m, tea.WithAltScreen())
+	if _, err := p.Run(); err != nil {
+		fmt.Println("Error running program:", err)
+		os.Exit(1)
+	}
+	if m.cancelled {
+		os.Exit(0)
+	}
+	return selected.ToSlice(), m.back
 }

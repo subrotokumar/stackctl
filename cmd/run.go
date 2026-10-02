@@ -10,77 +10,113 @@ import (
 	"github.com/spf13/cobra"
 )
 
+type projectKind int
+
+const (
+	kindUnknown projectKind = iota
+	kindSpring
+	kindQuarkus
+)
+
+func (k projectKind) String() string {
+	switch k {
+	case kindSpring:
+		return "Spring Boot"
+	case kindQuarkus:
+		return "Quarkus"
+	}
+	return "unknown"
+}
+
 func fileExists(path string) bool {
 	_, err := os.Stat(path)
 	return err == nil
 }
 
-func detectBuildTool() (tool string, args []string, err error) {
-	isWindows := runtime.GOOS == "windows"
+// detectProject inspects the build files to decide whether this is a
+// Quarkus or Spring Boot project.
+func detectProject() projectKind {
+	for _, f := range []string{"pom.xml", "build.gradle", "build.gradle.kts"} {
+		b, err := os.ReadFile(f)
+		if err != nil {
+			continue
+		}
+		s := string(b)
+		switch {
+		case strings.Contains(s, "io.quarkus"):
+			return kindQuarkus
+		case strings.Contains(s, "org.springframework.boot"):
+			return kindSpring
+		}
+	}
+	// Fallback for Spring projects whose build file we couldn't read.
+	if fileExists("src/main/resources/application.properties") ||
+		fileExists("src/main/resources/application.yml") {
+		return kindSpring
+	}
+	return kindUnknown
+}
 
-	// Maven wrapper (preferred if exists)
-	mvnw := "./mvnw"
-	if isWindows {
-		mvnw = "mvnw.cmd"
+func wrapperPath(unix, windows string) string {
+	if runtime.GOOS == "windows" {
+		return ".\\" + windows
 	}
-	if fileExists(mvnw) {
-		return mvnw, []string{"spring-boot:run"}, nil
+	return "./" + unix
+}
+
+func detectBuildTool(kind projectKind) (tool string, args []string, err error) {
+	mavenGoal, gradleTask := "spring-boot:run", "bootRun"
+	if kind == kindQuarkus {
+		mavenGoal, gradleTask = "quarkus:dev", "quarkusDev"
 	}
 
-	// System Maven fall-back
-	if _, err := exec.LookPath("mvn"); err == nil {
-		return "mvn", []string{"spring-boot:run"}, nil
-	}
+	hasMaven := fileExists("pom.xml")
+	hasGradle := fileExists("build.gradle") || fileExists("build.gradle.kts")
 
-	// Gradle wrapper
-	gradlew := "./gradlew"
-	if isWindows {
-		gradlew = "gradlew.bat"
+	if hasMaven || !hasGradle {
+		if w := wrapperPath("mvnw", "mvnw.cmd"); fileExists(w) {
+			return w, []string{mavenGoal}, nil
+		}
+		if _, err := exec.LookPath("mvn"); err == nil {
+			return "mvn", []string{mavenGoal}, nil
+		}
 	}
-	if fileExists(gradlew) {
-		return gradlew,
-			[]string{"bootRun"}, // Spring Boot plugin for Gradle
-			nil
+	if hasGradle || !hasMaven {
+		if w := wrapperPath("gradlew", "gradlew.bat"); fileExists(w) {
+			return w, []string{gradleTask}, nil
+		}
+		if _, err := exec.LookPath("gradle"); err == nil {
+			return "gradle", []string{gradleTask}, nil
+		}
 	}
-
-	// System Gradle fall-back
-	if _, err := exec.LookPath("gradle"); err == nil {
-		return "gradle", []string{"bootRun"}, nil
-	}
-
 	return "", nil, fmt.Errorf("no Maven/Gradle build tool found")
 }
 
 var runCmd = &cobra.Command{
 	Use:   "run",
-	Short: "Run a Spring and Quarkus project",
+	Short: "Run a Spring Boot or Quarkus project",
 	Run: func(cmd *cobra.Command, args []string) {
-
-		// Quick Spring Boot detection (properties or yml)
-		if !(fileExists("src/main/resources/application.properties") ||
-			fileExists("src/main/resources/application.yml")) {
-
-			fmt.Println("❌ Not a Spring Boot project: no application.properties/yml found")
+		kind := detectProject()
+		if kind == kindUnknown {
+			fmt.Println("❌ Not a Spring Boot or Quarkus project (no pom.xml/build.gradle with Spring Boot or Quarkus found)")
 			os.Exit(1)
 		}
 
-		// Detect and select correct build tool
-		tool, toolArgs, err := detectBuildTool()
+		tool, toolArgs, err := detectBuildTool(kind)
 		if err != nil {
 			fmt.Printf("❌ %v\n", err)
 			os.Exit(1)
 		}
 
-		fmt.Printf("🚀 Starting Spring Boot using: %s %s\n",
-			tool, strings.Join(toolArgs, " "))
+		fmt.Printf("🚀 Starting %s using: %s %s\n", kind, tool, strings.Join(toolArgs, " "))
 
-		cmdExec := exec.Command(tool, toolArgs...)
-		cmdExec.Stdout = os.Stdout
-		cmdExec.Stderr = os.Stderr
-		cmdExec.Stdin = os.Stdin
+		c := exec.Command(tool, toolArgs...)
+		c.Stdout = os.Stdout
+		c.Stderr = os.Stderr
+		c.Stdin = os.Stdin
 
-		if err := cmdExec.Run(); err != nil {
-			fmt.Printf("❌ Error running Spring Boot project: %v\n", err)
+		if err := c.Run(); err != nil {
+			fmt.Printf("❌ Error running %s project: %v\n", kind, err)
 			os.Exit(1)
 		}
 	},

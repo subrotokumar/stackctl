@@ -21,6 +21,7 @@ type model struct {
 	textInput    textinput.Model
 	err          error
 	quitting     bool
+	back         bool
 }
 
 func New(title string, defaultValue string) model {
@@ -49,8 +50,12 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.Type {
-		case tea.KeyEsc:
+		case tea.KeyCtrlC:
 			os.Exit(0)
+			return m, tea.Quit
+		case tea.KeyEsc:
+			m.quitting = true
+			m.back = true
 			return m, tea.Quit
 		case tea.KeyEnter:
 			m.quitting = true
@@ -70,26 +75,37 @@ func (m *model) View() string {
 	if m.quitting {
 		return ""
 	}
+	hint := core.GreyStyle.Render("enter: confirm • esc: back • ctrl+c: quit")
 	if hidePlaceHolder {
 		return fmt.Sprintf(
 			"\n%s :\n%s",
 			core.QuestionStyle.Render(m.title),
 			m.textInput.View(),
-		) + "\n"
+		) + "\n\n" + hint + "\n"
 	}
 	return fmt.Sprintf(
 		"\n%s (%s):\n%s",
 		core.QuestionStyle.Render(m.title),
 		core.GreyStyle.Render(m.defaultValue),
 		m.textInput.View(),
-	) + "\n"
+	) + "\n\n" + hint + "\n"
+}
+
+func (m model) value() string {
+	if val := m.textInput.Value(); val != "" {
+		return val
+	}
+	return m.defaultValue
 }
 
 func (m model) Run() string {
 	_, _ = tea.NewProgram(&m).Run()
-	if val := m.textInput.Value(); val == "" {
-		return m.defaultValue
-	} else {
-		return val
-	}
+	return m.value()
+}
+
+// RunWithBack returns the entered text (or the default if empty),
+// and back=true if the user pressed esc.
+func (m model) RunWithBack() (string, bool) {
+	_, _ = tea.NewProgram(&m).Run()
+	return m.value(), m.back
 }
