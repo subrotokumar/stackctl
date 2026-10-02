@@ -1,7 +1,14 @@
 [tools]
-go = "1.27.0"
+go = "1.24.0"
 goreleaser = "latest"
 upx = "latest"
 
 [tasks.build]
 run = ['go build -ldflags "-s -w"', 'upx ./stackctl']
+
+[tasks.encrypt]
+run = ["sops --encrypt --in-place .env.yaml"]
+alias = ["e"]
+
+[tasks.release]
+run = 'sops exec-env .env.yaml "goreleaser release --clean"'

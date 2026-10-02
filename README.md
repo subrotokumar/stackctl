@@ -1,12 +1,16 @@
-# Stackctl – Java Project Initializr TUI CLI 🚀
+# Stackctl – Project Initializr
 
-Stackctl is a fast, interactive Terminal User Interface (TUI) CLI for managing the entire lifecycle of Java-based projects.
+![](https://skills.syvixor.com/api/icons?i=quarkus,spring&perline=12&radius=40)  
 
-It goes beyond project generation by offering a stack of developer utilities — project initialization, testing, scripts, and automation — all from a clean, keyboard-first terminal experience.
+**Stackctl** is a fast, interactive Terminal User Interface (TUI) CLI for creating Java application projects from framework starters.
+
+Select your framework, choose dependencies and project options, and generate a ready to run project directly from your terminal.
+
+Built for a keyboard first workflow, Stackctl removes the need to open a browser just to bootstrap a new application.
 
 Powered by Go, Bubble Tea, and official framework APIs.
 
-No browser. No boilerplate. Just ship. ⚡
+**No browser. No boilerplate. Just ship. ⚡**
 
 ---
 
@@ -14,7 +18,7 @@ No browser. No boilerplate. Just ship. ⚡
 
 🚀 Project Initialization
   - Generate new projects using official APIs
-  - Supported stacks:  
+  - Supported stacks:
     Spring Boot  
     Quarkus   
     Micronaut (planned)  
@@ -50,20 +54,43 @@ Dependencies (multi-select with search)
 ## 📦 Installation
 
 ### Install directly
+## Installation
+
+### Linux and macOS
 
 ```bash
+curl -fsSL https://raw.githubusercontent.com/subrotokumar/stackctl/main/scripts/install.sh | sh
+```
+
+### Windows PowerShell
+
+```powershell
+irm https://raw.githubusercontent.com/subrotokumar/stackctl/main/scripts/install.ps1 | iex
+```
+
+### Windows CMD
+
+```cmd
+curl -fsSL https://raw.githubusercontent.com/subrotokumar/stackctl/main/scripts/install.cmd -o install.cmd && install.cmd
+```
+
+
+### Install with Go
+
+```cmd
 go install github.com/subrotokumar/stackctl@latest
 ```
 
-### From Source
+### Manual Build Installation
 
-Make sure you have Go 1.21+ installed.
+You can also clone the repository and run the installation script directly:
 
 ```bash
 git clone https://github.com/subrotokumar/stackctl.git
 cd stackctl
 go install
 ```
+
 
 ---
 

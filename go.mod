@@ -1,6 +1,6 @@
 module github.com/subrotokumar/stackctl
 
-go 1.27.0
+go 1.24.0
 
 require (
 	github.com/charmbracelet/bubbles v0.21.1-0.20250623103423-23b8fd6302d7
