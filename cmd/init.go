@@ -15,14 +15,15 @@ import (
 	"github.com/subrotokumar/stackctl/internal/spring"
 )
 
-const logo = `
-  _________ __                 __           __  .__   
- /   _____//  |______    ____ |  | __ _____/  |_|  |  
- \_____  \\   __\__  \ _/ ___\|  |/ // ___\   __\  |  
- /        \|  |  / __ \\  \___|    <\  \___|  | |  |__
-/_______  /|__| (____  /\___  >__|_ \\___  >__| |____/
-        \/           \/     \/     \/    \/           
-`
+var logos = []string{
+	"",
+	" ████ █████  ███   ███  █   █  ███  █████ █",
+	"█       █   █   █ █     █  █  █       █   █",
+	" ███    █   █████ █     ███   █       █   █",
+	"    █   █   █   █ █     █  █  █       █   █",
+	"████    █   █   █  ███  █   █  ███    █   █████",
+	"",
+}
 
 type ProjectType string
 
@@ -43,21 +44,20 @@ Example:
 `,
 	Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println()
 		if core.ShowLogo {
-			fmt.Println(core.LogoStyle.Render(logo))
+			block := core.LogoStyle.Render(strings.Join(logos, "\n"))
+			fmt.Print("\r\n" + strings.ReplaceAll(block, "\n", "\r\n") + "\r\n")
 		}
-
 		project := "spring"
 		if len(args) == 1 {
 			project = strings.ToLower(args[0])
 		}
 		switch project {
 		case "spring", "springboot":
-			fmt.Println(core.GreenStyle.Render("SPRING"))
+			fmt.Print(strings.ReplaceAll(core.GreenStyle.Render("SPRING"), "\n", "\r\n") + "\r\n")
 			SpringStarter(cmd, args)
 		case "quarkus":
-			fmt.Println(core.GreenStyle.Render("QUARKUS"))
+			fmt.Print(strings.ReplaceAll(core.GreenStyle.Render("QUARKUS"), "\n", "\r\n") + "\r\n")
 			QuarkusStarter(cmd, args)
 		default:
 			fmt.Println(core.RedStyle.Render("❌ Unknown project type: " + project))
