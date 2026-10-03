@@ -28,6 +28,74 @@ var (
 	artifactRe = regexp.MustCompile(`^[A-Za-z0-9][A-Za-z0-9._-]*$`)
 )
 
+// toOptions returns the options with the server's default first.
+func (g apiGroup) toOptions() []Option {
+	out := make([]Option, 0, len(g.Options))
+	add := func(o apiOption) {
+		if o.Value == "" {
+			return
+		}
+		label := o.Label
+		if label == "" {
+			label = o.Value
+		}
+		out = append(out, Option{Label: label, Value: o.Value})
+	}
+	if g.DefaultOption != nil {
+		add(*g.DefaultOption)
+	}
+	for _, o := range g.Options {
+		if g.DefaultOption != nil && o.Value == g.DefaultOption.Value {
+			continue
+		}
+		add(o)
+	}
+	return out
+}
+
+// FetchSelectOptions reads the available choices from launch.micronaut.io.
+// It never fails: any group it cannot read keeps its built-in default.
+func FetchSelectOptions() SelectOptions {
+	opts := DefaultSelectOptions()
+
+	resp, err := httpClient.Get(BaseURL + "/select-options")
+	if err != nil {
+		return opts
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return opts
+	}
+
+	var raw map[string]json.RawMessage
+	if err := json.NewDecoder(resp.Body).Decode(&raw); err != nil {
+		return opts
+	}
+
+	pick := func(dst *[]Option, keys ...string) {
+		for _, k := range keys {
+			data, ok := raw[k]
+			if !ok {
+				continue
+			}
+			var g apiGroup
+			if err := json.Unmarshal(data, &g); err != nil {
+				continue
+			}
+			if o := g.toOptions(); len(o) > 0 {
+				*dst = o
+				return
+			}
+		}
+	}
+	pick(&opts.AppTypes, "type", "applicationType")
+	pick(&opts.Languages, "lang", "language")
+	pick(&opts.BuildTools, "build")
+	pick(&opts.TestFrameworks, "test")
+	pick(&opts.JavaVersions, "jdkVersion", "javaVersion")
+	return opts
+}
+
 func FetchFeatures(appType string) ([]Feature, error) {
 	path := "/application-types/" + url.PathEscape(appType) + "/features"
 	resp, err := httpClient.Get(BaseURL + path)

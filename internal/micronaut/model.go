@@ -15,6 +15,57 @@ type Option struct {
 	Value string
 }
 
+type apiOption struct {
+	Value string `json:"value"`
+	Label string `json:"label"`
+}
+
+type apiGroup struct {
+	Options       []apiOption `json:"options"`
+	DefaultOption *apiOption  `json:"defaultOption"`
+}
+
+// SelectOptions holds the choices shown in the prompts.
+type SelectOptions struct {
+	AppTypes       []Option
+	Languages      []Option
+	BuildTools     []Option
+	TestFrameworks []Option
+	JavaVersions   []Option
+}
+
+// DefaultSelectOptions is the fallback used when /select-options cannot be read.
+func DefaultSelectOptions() SelectOptions {
+	return SelectOptions{
+		AppTypes: []Option{
+			{"Application", "DEFAULT"},
+			{"Command Line Application", "CLI"},
+			{"Serverless Function", "FUNCTION"},
+			{"gRPC Application", "GRPC"},
+			{"Messaging Application", "MESSAGING"},
+		},
+		Languages: []Option{
+			{"Java", "JAVA"},
+			{"Kotlin", "KOTLIN"},
+			{"Groovy", "GROOVY"},
+		},
+		BuildTools: []Option{
+			{"Gradle (Groovy DSL)", BuildGradle},
+			{"Gradle (Kotlin DSL)", BuildGradleKotlin},
+			{"Maven", BuildMaven},
+		},
+		TestFrameworks: []Option{
+			{"JUnit", "JUNIT"},
+			{"Spock", "SPOCK"},
+			{"Kotest", "KOTEST"},
+		},
+		JavaVersions: []Option{
+			{"21", "JDK_21"},
+			{"17", "JDK_17"},
+		},
+	}
+}
+
 var (
 	AppTypes = []Option{
 		{"Application", "DEFAULT"},

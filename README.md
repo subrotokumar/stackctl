@@ -1,6 +1,9 @@
 # Stackctl – Project Initializr
 
-![](https://skills.syvixor.com/api/icons?i=quarkus,spring&perline=12&radius=40)  
+<img src="./public/spring.png" style="border-radius: 16px; width:80"> &nbsp;&nbsp;
+<img src="./public/quarkus.png" style="border-radius: 16px; width:80"> &nbsp;&nbsp;
+<img src="./public/micronaut.png" style="border-radius: 16px; width:80">
+
 
 **Stackctl** is a fast, interactive Terminal User Interface (TUI) CLI for creating Java application projects from framework starters.
 
@@ -21,7 +24,7 @@ Powered by Go, Bubble Tea, and official framework APIs.
   - Supported stacks:
     Spring Boot  
     Quarkus   
-    Micronaut (planned)  
+    Micronaut
 
 Configure:
   - Build tool (Maven / Gradle)

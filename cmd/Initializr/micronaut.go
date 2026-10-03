@@ -10,23 +10,26 @@ import (
 )
 
 func MicronautStarter() {
+
+	fmt.Println(core.GreyStyle.Render("Fetching Micronaut options..."))
+	opts := micronaut.FetchSelectOptions()
+
 	project := micronaut.Project{
-		Type:        micronaut.AppTypes[0].Value,
+		Type:        opts.AppTypes[0].Value,
 		Group:       micronaut.DefaultGroup,
 		Artifact:    micronaut.DefaultArtifact,
-		Lang:        micronaut.Languages[0].Value,
-		Build:       micronaut.BuildTools[0].Value,
-		Test:        micronaut.TestFrameworks[0].Value,
-		JavaVersion: micronaut.JavaVersions[0].Value,
+		Lang:        opts.Languages[0].Value,
+		Build:       opts.BuildTools[0].Value,
+		Test:        opts.TestFrameworks[0].Value,
+		JavaVersion: opts.JavaVersions[0].Value,
 		Features:    []string{},
 	}
 
-	// Labels shown in the prompts; mapped to API values after each answer.
-	typeLabel := micronaut.AppTypes[0].Label
-	langLabel := micronaut.Languages[0].Label
-	buildLabel := micronaut.BuildTools[0].Label
-	testLabel := micronaut.TestFrameworks[0].Label
-	javaLabel := micronaut.JavaVersions[0].Label
+	typeLabel := opts.AppTypes[0].Label
+	langLabel := opts.Languages[0].Label
+	buildLabel := opts.BuildTools[0].Label
+	testLabel := opts.TestFrameworks[0].Label
+	javaLabel := opts.JavaVersions[0].Label
 
 	ask := func(title string, opts []micronaut.Option, label, dst *string) Step {
 		return func() bool {
@@ -41,14 +44,15 @@ func MicronautStarter() {
 	var steps []Step
 
 	if core.EnableMetadataInput {
+
 		steps = append(steps,
-			ask("Application Type", micronaut.AppTypes, &typeLabel, &project.Type),
+			ask("Application Type", opts.AppTypes, &typeLabel, &project.Type),
 			func() bool { return AskText("Name (artifact)", &project.Artifact) },
 			func() bool { return AskText("Group (base package)", &project.Group) },
-			ask("Language", micronaut.Languages, &langLabel, &project.Lang),
-			ask("Build Tool", micronaut.BuildTools, &buildLabel, &project.Build),
-			ask("Test Framework", micronaut.TestFrameworks, &testLabel, &project.Test),
-			ask("Java Version", micronaut.JavaVersions, &javaLabel, &project.JavaVersion),
+			ask("Language", opts.Languages, &langLabel, &project.Lang),
+			ask("Build Tool", opts.BuildTools, &buildLabel, &project.Build),
+			ask("Test Framework", opts.TestFrameworks, &testLabel, &project.Test),
+			ask("Java Version", opts.JavaVersions, &javaLabel, &project.JavaVersion),
 		)
 	}
 
