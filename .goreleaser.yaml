@@ -1,8 +1,6 @@
-# This is an example .goreleaser.yml file with some sensible defaults.
-# Make sure to check the documentation at https://goreleaser.com
+# GoReleaser config with UPX compression.
+# Docs: https://goreleaser.com
 
-# The lines below are called `modelines`. See `:help modeline`
-# Feel free to remove those if you don't want/need to use them.
 # yaml-language-server: $schema=https://goreleaser.com/static/schema.json
 # vim: set ts=2 sw=2 tw=0 fo=cnqoj
 
@@ -10,15 +8,22 @@ version: 2
 
 before:
   hooks:
-    # You may remove this if you don't use go modules.
     - go mod tidy
-    # you may remove this if you don't need go generate
     - go generate ./...
 
 builds:
-  - main: ./...
+  - id: default
+    # Point this at your main package, e.g. ./cmd/myapp (or "." for the root).
+    main: ./...
     env:
       - CGO_ENABLED=0
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w
+      - -X main.version={{.Version}}
+      - -X main.commit={{.Commit}}
+      - -X main.date={{.Date}}
     goos:
       - linux
       - windows
@@ -28,9 +33,31 @@ builds:
       - amd64
       - "386"
 
+# UPX compression. Needs `upx` installed on the machine running GoReleaser.
+# darwin is deliberately excluded: UPX-packed macOS binaries often break
+# under code signing / Gatekeeper.
+upx:
+  # Linux: amd64, arm64, 386
+  - enabled: true
+    ids: [default]
+    goos: [linux]
+    goarch: [amd64, arm64, "386"]
+    compress: best
+    lzma: true
+    required: false
+
+  # Windows: amd64, 386 (UPX doesn't support windows/arm64)
+  - enabled: true
+    ids: [default]
+    goos: [windows]
+    goarch: [amd64, "386"]
+    compress: best
+    lzma: true
+    required: false
+
 archives:
   - formats: [tar.gz]
-    # this name template makes the OS and Arch compatible with the results of `uname`.
+    # OS and arch names match the output of `uname`.
     name_template: >-
       {{ .ProjectName }}_
       {{- title .Os }}_
@@ -38,10 +65,13 @@ archives:
       {{- else if eq .Arch "386" }}i386
       {{- else }}{{ .Arch }}{{ end }}
       {{- if .Arm }}v{{ .Arm }}{{ end }}
-    # use zip for windows archives
+    # Use zip for Windows archives.
     format_overrides:
       - goos: windows
         formats: [zip]
+
+checksum:
+  name_template: checksums.txt
 
 changelog:
   sort: asc

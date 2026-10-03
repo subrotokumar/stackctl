@@ -88,6 +88,15 @@ func javaVersions() []string {
 	return out
 }
 
+// FetchPresets returns the starter presets offered by code.quarkus.io.
+func FetchPresets() ([]Preset, error) {
+	var presets []Preset
+	if err := getJSON("/api/presets", &presets); err != nil {
+		return nil, err
+	}
+	return presets, nil
+}
+
 // Run fetches everything needed to drive the interactive prompts.
 func Run() (*Starter, error) {
 	var exts []Extension

@@ -2,7 +2,6 @@ package initializr
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/subrotokumar/stackctl/cmd/core"
 	"github.com/subrotokumar/stackctl/cmd/ui/listview"
@@ -13,7 +12,7 @@ func SpringStarter() {
 	initializr, err := spring.Run()
 	if err != nil {
 		fmt.Printf("%v", err.Error())
-		os.Exit(0)
+		return
 	}
 
 	md := spring.ProjectMetadata{

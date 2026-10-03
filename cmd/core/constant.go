@@ -5,5 +5,4 @@ const (
 	EnableMetadataInput       = true
 	EnableDependencySelection = true
 	EnableExtensionSelection  = true
-	Version                   = "v2.0.0"
 )

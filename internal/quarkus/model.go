@@ -20,6 +20,13 @@ type Extension struct {
 	Selected bool `json:"-"`
 }
 
+// Preset is a single entry of https://code.quarkus.io/api/presets.
+type Preset struct {
+	Key        string   `json:"key"`
+	Title      string   `json:"title"`
+	Extensions []string `json:"extensions"` // extension IDs (groupId:artifactId)
+}
+
 // Starter holds the defaults and the choices shown to the user.
 type Starter struct {
 	Group       string

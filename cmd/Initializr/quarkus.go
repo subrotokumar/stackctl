@@ -2,7 +2,6 @@ package initializr
 
 import (
 	"fmt"
-	"os"
 	"sort"
 	"strings"
 
@@ -11,12 +10,39 @@ import (
 	"github.com/subrotokumar/stackctl/internal/quarkus"
 )
 
+const presetNone = "None (skip)"
+
+func applyPreset(current, previous, next []string, known map[string]bool) []string {
+	remove := make(map[string]bool, len(previous))
+	for _, id := range previous {
+		remove[id] = true
+	}
+
+	seen := make(map[string]bool)
+	out := make([]string, 0, len(current)+len(next))
+	for _, id := range current {
+		if remove[id] || seen[id] {
+			continue
+		}
+		seen[id] = true
+		out = append(out, id)
+	}
+	for _, id := range next {
+		if !known[id] || seen[id] {
+			continue
+		}
+		seen[id] = true
+		out = append(out, id)
+	}
+	return out
+}
+
 func QuarkusStarter() {
 	fmt.Println(core.GreyStyle.Render("Fetching Quarkus metadata..."))
 	starter, err := quarkus.Run()
 	if err != nil {
-		fmt.Println(core.RedStyle.Render("❌ " + err.Error()))
-		os.Exit(1)
+		fmt.Println(core.RedStyle.Render("Error: " + err.Error()))
+		return
 	}
 
 	initializr := quarkus.ProjectInitializr{
@@ -31,6 +57,7 @@ func QuarkusStarter() {
 
 	var steps []Step
 	starterCode := "Yes"
+	presetChoice := presetNone
 
 	if core.EnableMetadataInput {
 		steps = append(steps,
@@ -49,9 +76,42 @@ func QuarkusStarter() {
 		)
 	}
 
+	// Optional preset step (non-fatal if the API is unreachable).
+	if core.EnableExtensionSelection {
+		presets, err := quarkus.FetchPresets()
+		if err != nil {
+			fmt.Println(core.GreyStyle.Render("Skipping presets: " + err.Error()))
+		} else if len(presets) > 0 {
+			known := make(map[string]bool, len(starter.Extensions))
+			for _, e := range starter.Extensions {
+				known[e.ID] = true
+			}
+
+			titles := []string{presetNone}
+			byTitle := map[string]quarkus.Preset{}
+			for _, p := range presets {
+				titles = append(titles, p.Title)
+				byTitle[p.Title] = p
+			}
+
+			var applied []string
+			steps = append(steps, func() bool {
+				if AskSelect("Preset (optional)", titles, &presetChoice) {
+					return true
+				}
+				var next []string
+				if p, ok := byTitle[presetChoice]; ok {
+					next = p.Extensions
+				}
+				initializr.Extension = applyPreset(initializr.Extension, applied, next, known)
+				applied = next
+				return false
+			})
+		}
+	}
+
 	if core.EnableExtensionSelection {
 		steps = append(steps, func() bool {
-			// WithSelected restores earlier picks when coming back to this Step.
 			exts, back := extension.New(starter.Extensions).
 				WithSelected(initializr.Extension).
 				RunWithBack()
@@ -78,6 +138,10 @@ func QuarkusStarter() {
 		})
 	}
 
+	if core.EnableExtensionSelection && presetChoice != presetNone {
+		fmt.Printf("\n%s %s\n", core.QuestionStyle.Render("Preset:"), presetChoice)
+	}
+
 	if core.EnableExtensionSelection {
 		fmt.Printf("\n%s\n", core.QuestionStyle.Render("Selected Extensions:"))
 		if len(initializr.Extension) == 0 {
@@ -90,14 +154,14 @@ func QuarkusStarter() {
 
 	fmt.Printf("\n%s\n", core.GreyStyle.Render("Generating project..."))
 	if err := initializr.Generate(); err != nil {
-		fmt.Println(core.RedStyle.Render("❌ " + err.Error()))
-		os.Exit(1)
+		fmt.Println(core.RedStyle.Render("Error: " + err.Error()))
+		return
 	}
 
 	runCmd := "./mvnw quarkus:dev"
 	if initializr.BuildTool != quarkus.BuildMaven {
 		runCmd = "./gradlew quarkusDev"
 	}
-	fmt.Printf("\n%s\n", core.EndingMsgStyle.Render("✅ Quarkus project created in ./"+initializr.Artifact))
+	fmt.Printf("\n%s\n", core.EndingMsgStyle.Render("Quarkus project created in ./"+initializr.Artifact))
 	fmt.Printf("%s\n", core.TipMsgStyle.Render("Next: cd "+initializr.Artifact+" && stackctl run   (or "+runCmd+")"))
 }

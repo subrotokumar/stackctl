@@ -1,8 +1,3 @@
-[tools]
-go = "1.24.0"
-goreleaser = "latest"
-upx = "latest"
-
 [tasks.build]
 run = ['go build -ldflags "-s -w"', 'upx ./stackctl']
 
