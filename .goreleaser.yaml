@@ -21,9 +21,9 @@ builds:
       - -trimpath
     ldflags:
       - -s -w
-      - -X main.version={{.Version}}
-      - -X main.commit={{.Commit}}
-      - -X main.date={{.Date}}
+      - -X github.com/subrotokumar/stackctl/cmd/core={{.Version}}
+      - -X github.com/subrotokumar/stackctl/cmd/core={{.Commit}}
+      - -X github.com/subrotokumar/stackctl/cmd/core={{.Date}}
     goos:
       - linux
       - windows

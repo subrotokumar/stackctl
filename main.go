@@ -7,6 +7,12 @@ import (
 	"github.com/subrotokumar/stackctl/cmd"
 )
 
+var (
+	version = "dev"
+	commit  = "none"
+	date    = "unknown"
+)
+
 func main() {
 	cmd.Execute()
 }

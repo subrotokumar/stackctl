@@ -7,7 +7,7 @@ import (
 
 	"github.com/subrotokumar/stackctl/cmd/core"
 	"github.com/subrotokumar/stackctl/cmd/ui/extension"
-	"github.com/subrotokumar/stackctl/internal/quarkus"
+	"github.com/subrotokumar/stackctl/internal/init/quarkus"
 )
 
 const presetNone = "None (skip)"

@@ -5,7 +5,7 @@ import (
 
 	"github.com/subrotokumar/stackctl/cmd/core"
 	"github.com/subrotokumar/stackctl/cmd/ui/listview"
-	"github.com/subrotokumar/stackctl/internal/spring"
+	"github.com/subrotokumar/stackctl/internal/init/spring"
 )
 
 func SpringStarter() {

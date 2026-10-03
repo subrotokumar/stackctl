@@ -6,7 +6,7 @@ import (
 
 	"github.com/subrotokumar/stackctl/cmd/core"
 	"github.com/subrotokumar/stackctl/cmd/ui/feature"
-	"github.com/subrotokumar/stackctl/internal/micronaut"
+	"github.com/subrotokumar/stackctl/internal/init/micronaut"
 )
 
 func MicronautStarter() {

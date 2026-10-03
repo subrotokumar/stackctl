@@ -11,16 +11,6 @@ import (
 	"github.com/subrotokumar/stackctl/cmd/ui/selector"
 )
 
-var logos = []string{
-	"",
-	" ████ █████  ███   ███  █   █  ███  █████ █",
-	"█       █   █   █ █     █  █  █       █   █",
-	" ███    █   █████ █     ███   █       █   █",
-	"    █   █   █   █ █     █  █  █       █   █",
-	"████    █   █   █  ███  █   █  ███    █   █████",
-	"",
-}
-
 type ProjectType string
 
 var initCmd = &cobra.Command{
@@ -44,10 +34,11 @@ Example:
   stackctl init spring
   stackctl init quarkus
 `,
-	Args: cobra.MinimumNArgs(0),
+	Args:    cobra.MinimumNArgs(0),
+	Aliases: []string{"new"},
 	Run: func(cmd *cobra.Command, args []string) {
 		if core.ShowLogo {
-			block := core.LogoStyle.Render(strings.Join(logos, "\n"))
+			block := core.LogoStyle.Render(strings.Join(core.Logo, "\n"))
 			fmt.Print("\r\n" + strings.ReplaceAll(block, "\n", "\r\n") + "\r\n")
 		}
 		var project string
@@ -69,16 +60,16 @@ Example:
 		}
 		switch project {
 		case "spring", "springboot":
-			fmt.Print(strings.ReplaceAll(core.GreenStyle.Render("SPRING"), "\n", "\r\n") + "\r\n")
+			fmt.Print(strings.ReplaceAll(core.GreenStyle.Render("Spring"), "\n", "\r\n") + "\r\n")
 			initializr.SpringStarter()
 		case "quarkus":
-			fmt.Print(strings.ReplaceAll(core.GreenStyle.Render("QUARKUS"), "\n", "\r\n") + "\r\n")
+			fmt.Print(strings.ReplaceAll(core.GreenStyle.Render("Quarkus"), "\n", "\r\n") + "\r\n")
 			initializr.QuarkusStarter()
 		case "micronaut":
-			fmt.Print(strings.ReplaceAll(core.GreenStyle.Render("MICRONAUT"), "\n", "\r\n") + "\r\n")
+			fmt.Print(strings.ReplaceAll(core.GreenStyle.Render("Micronaut"), "\n", "\r\n") + "\r\n")
 			initializr.MicronautStarter()
 		default:
-			fmt.Println(core.RedStyle.Render("❌ Unknown project type: " + project))
+			fmt.Println(core.RedStyle.Render("Unknown project type: " + project))
 			fmt.Println("Supported types: spring, springboot, quarkus")
 		}
 	},

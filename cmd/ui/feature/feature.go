@@ -9,7 +9,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/subrotokumar/stackctl/cmd/core"
-	"github.com/subrotokumar/stackctl/internal/micronaut"
+	"github.com/subrotokumar/stackctl/internal/init/micronaut"
 )
 
 var docStyle = lipgloss.NewStyle().Margin(1, 2)

@@ -17,9 +17,9 @@ var (
 	StartedCode = lipgloss.NewStyle().
 			Margin(0).
 			Padding(0, 1).
-			// Background(lipgloss.Color("#FFFF00")).
-			Foreground(lipgloss.Color("#FFFF00")).
-			Bold(true)
+		// Background(lipgloss.Color("#FFFF00")).
+		Foreground(lipgloss.Color("#FFFF00")).
+		Bold(true)
 
 	DeprecatedCode = lipgloss.NewStyle().
 			Margin(0).
@@ -42,6 +42,7 @@ var (
 				Foreground(lipgloss.Color("#ffffffff")).
 				Bold(true)
 
+	PurpleStyle     = lipgloss.NewStyle().Foreground(lipgloss.Color("#7571f9")).Bold((true))
 	SelectedStyle   = lipgloss.NewStyle().Foreground(lipgloss.Color("#f476ffff")).Bold(true)
 	UnSelectedStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#b5b5b5ff")).Bold(true)
 	GreyStyle       = lipgloss.NewStyle().Foreground(lipgloss.Color("#7a7a7aff")).Bold(true)
