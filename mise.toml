@@ -1,9 +1,15 @@
 [tasks.build]
-run = ['go build -ldflags "-s -w"', 'upx ./stackctl']
+description = "Build a stripped and compressed stackctl binary"
+run = [
+    "go build -trimpath -ldflags='-s -w' -o stackctl .",
+    "upx --best --lzma stackctl",
+]
 
 [tasks.encrypt]
-run = ["sops --encrypt --in-place .env.yaml"]
-alias = ["e"]
+description = "Encrypt environment configuration with SOPS"
+alias = "e"
+run = "sops --encrypt --in-place .env.yaml"
 
 [tasks.release]
-run = 'sops exec-env .env.yaml "goreleaser release --clean"'
+description = "Build and publish a release with secrets from SOPS"
+run = "sops exec-env .env.yaml 'goreleaser release --clean'"

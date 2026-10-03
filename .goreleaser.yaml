@@ -44,7 +44,6 @@ upx:
     goarch: [amd64, arm64, "386"]
     compress: best
     lzma: true
-    required: false
 
   # Windows: amd64, 386 (UPX doesn't support windows/arm64)
   - enabled: true
@@ -53,7 +52,6 @@ upx:
     goarch: [amd64, "386"]
     compress: best
     lzma: true
-    required: false
 
 archives:
   - formats: [tar.gz]
