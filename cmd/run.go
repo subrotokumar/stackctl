@@ -16,6 +16,7 @@ const (
 	kindUnknown projectKind = iota
 	kindSpring
 	kindQuarkus
+	kindMicronaut
 )
 
 func (k projectKind) String() string {
@@ -24,6 +25,8 @@ func (k projectKind) String() string {
 		return "Spring Boot"
 	case kindQuarkus:
 		return "Quarkus"
+	case kindMicronaut:
+		return "Micronaut"
 	}
 	return "unknown"
 }
@@ -45,6 +48,8 @@ func detectProject() projectKind {
 		switch {
 		case strings.Contains(s, "io.quarkus"):
 			return kindQuarkus
+		case strings.Contains(s, "io.micronaut"):
+			return kindMicronaut
 		case strings.Contains(s, "org.springframework.boot"):
 			return kindSpring
 		}
@@ -66,8 +71,11 @@ func wrapperPath(unix, windows string) string {
 
 func detectBuildTool(kind projectKind) (tool string, args []string, err error) {
 	mavenGoal, gradleTask := "spring-boot:run", "bootRun"
-	if kind == kindQuarkus {
+	switch kind {
+	case kindQuarkus:
 		mavenGoal, gradleTask = "quarkus:dev", "quarkusDev"
+	case kindMicronaut:
+		mavenGoal, gradleTask = "mn:run", "run"
 	}
 
 	hasMaven := fileExists("pom.xml")

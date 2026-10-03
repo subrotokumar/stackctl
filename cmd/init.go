@@ -33,6 +33,12 @@ You must specify a project type as an argument.
 Supported project types:
   - spring | springboot
   - quarkus
+  - micronaut
+
+Example:
+  stackctl init spring
+  stackctl init quarkus
+  stackctl init micronaut
 
 Example:
   stackctl init spring
@@ -48,13 +54,16 @@ Example:
 		if len(args) == 1 {
 			project = strings.ToLower(args[0])
 		} else {
-			choice, back := selector.New("Project type", []string{"Spring Boot", "Quarkus"}).RunWithBack()
+			choice, back := selector.New("Project type", []string{"Spring Boot", "Quarkus", "Micronaut"}).RunWithBack()
 			if back {
-				os.Exit(0) // nothing to go back to at the first prompt
+				os.Exit(0)
 			}
-			if choice == "Quarkus" {
+			switch choice {
+			case "Quarkus":
 				project = "quarkus"
-			} else {
+			case "Micronaut":
+				project = "micronaut"
+			default:
 				project = "spring"
 			}
 		}
@@ -65,6 +74,9 @@ Example:
 		case "quarkus":
 			fmt.Print(strings.ReplaceAll(core.GreenStyle.Render("QUARKUS"), "\n", "\r\n") + "\r\n")
 			initializr.QuarkusStarter()
+		case "micronaut":
+			fmt.Print(strings.ReplaceAll(core.GreenStyle.Render("MICRONAUT"), "\n", "\r\n") + "\r\n")
+			initializr.MicronautStarter()
 		default:
 			fmt.Println(core.RedStyle.Render("❌ Unknown project type: " + project))
 			fmt.Println("Supported types: spring, springboot, quarkus")
