@@ -13,3 +13,8 @@ cmds = ["sops --encrypt --in-place .env.yaml"]
 [tasks.release]
 desc = "Build and publish a release with secrets from SOPS"
 cmds = ["sops exec-env .env.yaml 'goreleaser release --clean'"]
+
+[tasks.docs]
+desc = "Start docs server in dev mode"
+dir = "./docs"
+cmds = ["bun run docs:dev"]
