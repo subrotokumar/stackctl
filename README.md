@@ -1,8 +1,8 @@
 # Stackctl – Project Initializr
 
-<img src="./public/spring.png" style="border-radius: 16px; width:80"> &nbsp;&nbsp;
-<img src="./public/quarkus.png" style="border-radius: 16px; width:80"> &nbsp;&nbsp;
-<img src="./public/micronaut.png" style="border-radius: 16px; width:80">
+<img src="./public/spring.png" style="border-radius: 16px;" width="80"> &nbsp;&nbsp;
+<img src="./public/quarkus.png" style="border-radius: 16px;" width="80"> &nbsp;&nbsp;
+<img src="./public/micronaut.png" style="border-radius: 16px;" width="80">
 
 
 **Stackctl** is a fast, interactive Terminal User Interface (TUI) CLI for creating Java application projects from framework starters.
