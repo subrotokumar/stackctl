@@ -150,8 +150,6 @@ tasks:
 ## Same file in TOML
 
 ```toml
-version = "3"
-
 [vars]
 APP = "myapp"
 

@@ -36,8 +36,6 @@ tasks:
 ```
 
 ```toml [stackctl.toml]
-version = "3"
-
 [tasks.build]
 desc = "Build the app"
 cmds = ["./mvnw -q package"]
