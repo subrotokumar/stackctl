@@ -14,7 +14,7 @@ const (
 var (
 	Version = "dev"
 	Commit  = "none"
-	Date    = "unknown"
+	Date    = "none"
 )
 
 var Logo = []string{

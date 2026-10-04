@@ -12,7 +12,7 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
-	"github.com/subrotokumar/stackctl/cmd/core"
+	"github.com/subrotokumar/stackctl/v4/cmd/core"
 )
 
 var successStyle = lipgloss.NewStyle().

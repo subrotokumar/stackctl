@@ -8,8 +8,8 @@ import (
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/subrotokumar/stackctl/cmd/core"
-	"github.com/subrotokumar/stackctl/internal/init/spring"
+	"github.com/subrotokumar/stackctl/v4/cmd/core"
+	"github.com/subrotokumar/stackctl/v4/internal/init/spring"
 )
 
 var docStyle = lipgloss.NewStyle().Margin(1, 2)

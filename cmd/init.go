@@ -6,9 +6,9 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	initializr "github.com/subrotokumar/stackctl/cmd/Initializr"
-	"github.com/subrotokumar/stackctl/cmd/core"
-	"github.com/subrotokumar/stackctl/cmd/ui/selector"
+	initializr "github.com/subrotokumar/stackctl/v4/cmd/Initializr"
+	"github.com/subrotokumar/stackctl/v4/cmd/core"
+	"github.com/subrotokumar/stackctl/v4/cmd/ui/selector"
 )
 
 type ProjectType string

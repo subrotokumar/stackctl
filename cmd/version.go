@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/subrotokumar/stackctl/cmd/core"
+	"github.com/subrotokumar/stackctl/v4/cmd/core"
 )
 
 var versionCmd = &cobra.Command{
@@ -20,6 +20,9 @@ var versionCmd = &cobra.Command{
 		fmt.Printf("Version: %s\n", core.Version)
 		fmt.Printf("Creator: %s (%s)\n", core.Creator, core.Website)
 		fmt.Printf("Source Code: %s\n", core.SourceCode)
+		fmt.Printf("Release: %s\n", core.Date)
+		fmt.Printf("commit: %s\n", core.Commit)
+
 	},
 }
 

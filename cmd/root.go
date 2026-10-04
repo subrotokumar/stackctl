@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"github.com/subrotokumar/stackctl/cmd/core"
+	"github.com/subrotokumar/stackctl/v4/cmd/core"
 )
 
 // rootCmd represents the base command when called without any subcommands

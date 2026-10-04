@@ -6,7 +6,7 @@ import (
 
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/subrotokumar/stackctl/cmd/core"
+	"github.com/subrotokumar/stackctl/v4/cmd/core"
 )
 
 var hidePlaceHolder = true

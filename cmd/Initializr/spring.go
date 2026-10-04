@@ -3,9 +3,9 @@ package initializr
 import (
 	"fmt"
 
-	"github.com/subrotokumar/stackctl/cmd/core"
-	"github.com/subrotokumar/stackctl/cmd/ui/listview"
-	"github.com/subrotokumar/stackctl/internal/init/spring"
+	"github.com/subrotokumar/stackctl/v4/cmd/core"
+	"github.com/subrotokumar/stackctl/v4/cmd/ui/listview"
+	"github.com/subrotokumar/stackctl/v4/internal/init/spring"
 )
 
 func SpringStarter() {

@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/subrotokumar/stackctl/cmd/core"
-	"github.com/subrotokumar/stackctl/internal/task"
+	"github.com/subrotokumar/stackctl/v4/cmd/core"
+	"github.com/subrotokumar/stackctl/v4/internal/task"
 )
 
 var listCmd = &cobra.Command{

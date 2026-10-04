@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/subrotokumar/stackctl/cmd/core"
-	"github.com/subrotokumar/stackctl/cmd/ui/feature"
-	"github.com/subrotokumar/stackctl/internal/init/micronaut"
+	"github.com/subrotokumar/stackctl/v4/cmd/core"
+	"github.com/subrotokumar/stackctl/v4/cmd/ui/feature"
+	"github.com/subrotokumar/stackctl/v4/internal/init/micronaut"
 )
 
 func MicronautStarter() {

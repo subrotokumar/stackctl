@@ -80,7 +80,7 @@ curl -fsSL https://raw.githubusercontent.com/subrotokumar/stackctl/main/scripts/
 ### Install with Go
 
 ```bash
-go install github.com/subrotokumar/stackctl@latest
+go install github.com/subrotokumar/stackctl/v4@latest
 ```
 
 ### Manual Build Installation

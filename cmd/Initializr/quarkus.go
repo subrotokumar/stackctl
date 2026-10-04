@@ -5,9 +5,9 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/subrotokumar/stackctl/cmd/core"
-	"github.com/subrotokumar/stackctl/cmd/ui/extension"
-	"github.com/subrotokumar/stackctl/internal/init/quarkus"
+	"github.com/subrotokumar/stackctl/v4/cmd/core"
+	"github.com/subrotokumar/stackctl/v4/cmd/ui/extension"
+	"github.com/subrotokumar/stackctl/v4/internal/init/quarkus"
 )
 
 const presetNone = "None (skip)"

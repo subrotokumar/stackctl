@@ -1,10 +1,6 @@
-# GoReleaser config with UPX compression.
-# Docs: https://goreleaser.com
-
-# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
-# vim: set ts=2 sw=2 tw=0 fo=cnqoj
-
 version: 2
+
+project_name: stackctl
 
 before:
   hooks:
@@ -12,30 +8,27 @@ before:
     - go generate ./...
 
 builds:
-  - id: default
-    # Point this at your main package, e.g. ./cmd/myapp (or "." for the root).
+  - id: stackctl
     main: ./...
     env:
       - CGO_ENABLED=0
     flags:
       - -trimpath
     ldflags:
-      - -s -w
-      - -X github.com/subrotokumar/stackctl/cmd/core={{.Version}}
-      - -X github.com/subrotokumar/stackctl/cmd/core={{.Commit}}
-      - -X github.com/subrotokumar/stackctl/cmd/core={{.Date}}
+      - -s -w -X github.com/subrotokumar/stackctl/v4/cmd/core.Version=v{{.Version}}
+      - -s -w -X github.com/subrotokumar/stackctl/v4/cmd/core.Commit={{.Commit}}
+      - -s -w -X github.com/subrotokumar/stackctl/v4/cmd/core.Date={{.Date}}
     goos:
       - linux
       - windows
       - darwin
     goarch:
-      - arm64
       - amd64
-      - "386"
+      - arm64
+      - arm
+      - ppc64le
+      - s390x
 
-# UPX compression. Needs `upx` installed on the machine running GoReleaser.
-# darwin is deliberately excluded: UPX-packed macOS binaries often break
-# under code signing / Gatekeeper.
 upx:
   # Linux: amd64, arm64, 386
   - enabled: true

@@ -3,9 +3,9 @@ package initializr
 import (
 	"fmt"
 
-	"github.com/subrotokumar/stackctl/cmd/core"
-	"github.com/subrotokumar/stackctl/cmd/ui/inputtext"
-	"github.com/subrotokumar/stackctl/cmd/ui/selector"
+	"github.com/subrotokumar/stackctl/v4/cmd/core"
+	"github.com/subrotokumar/stackctl/v4/cmd/ui/inputtext"
+	"github.com/subrotokumar/stackctl/v4/cmd/ui/selector"
 )
 
 type Step func() (back bool)

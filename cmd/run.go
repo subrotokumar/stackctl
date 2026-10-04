@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/subrotokumar/stackctl/cmd/ui/picker"
-	"github.com/subrotokumar/stackctl/internal/task"
+	"github.com/subrotokumar/stackctl/v4/cmd/ui/picker"
+	"github.com/subrotokumar/stackctl/v4/internal/task"
 )
 
 var (
