@@ -19,6 +19,9 @@ var runCmd = &cobra.Command{
 	Use:   "run [task] [VAR=value ...] [-- extra args]",
 	Short: "Run a task from the task file (no task name opens an interactive selector)",
 	Args:  cobra.ArbitraryArgs,
+	Aliases: []string{
+		"x", "exec",
+	},
 	ValidArgsFunction: func(cmd *cobra.Command, args []string, _ string) ([]string, cobra.ShellCompDirective) {
 		if len(args) > 0 {
 			return nil, cobra.ShellCompDirectiveNoFileComp

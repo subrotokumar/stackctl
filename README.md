@@ -1,8 +1,8 @@
 # Stackctl: Project Initializr & Task Runner
 
-<img src="./public/spring.png" style="border-radius: 16px;" width="80"> &nbsp;&nbsp;
-<img src="./public/quarkus.png" style="border-radius: 16px;" width="80"> &nbsp;&nbsp;
-<img src="./public/micronaut.png" style="border-radius: 16px; background: #f4f2ed" width="80">
+<img src="./docs/public/spring.png" style="border-radius: 16px;" width="80"> &nbsp;&nbsp;
+<img src="./docs/public/quarkus.png" style="border-radius: 16px;" width="80"> &nbsp;&nbsp;
+<img src="./docs/public/micronaut.png" style="border-radius: 16px; background: #f4f2ed" width="80">
 
 
 **Stackctl** is a fast, interactive Terminal User Interface (TUI) CLI for creating  application projects from framework starters, and for running project tasks from a simple task file.
@@ -39,7 +39,7 @@ Dependencies (multi-select with search)
 
 ## 📸 Preview
 
-![](./public/demo.gif)
+![](./docs/public/demo.gif)
 
 
 ---

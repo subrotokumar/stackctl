@@ -6,6 +6,8 @@ Run `stackctl` without a command to open the project wizard.
 stackctl init
 ```
 
+![](../public/demo.gif)
+
 ## What you can configure
 
 | Option            | Notes                                           |
