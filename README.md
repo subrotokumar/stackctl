@@ -117,7 +117,6 @@ Once done, your project will be created and extracted automatically.
 | `stackctl run <task> -- <args>`      | Pass extra arguments, available as `{{.CLI_ARGS}}`  |
 | `stackctl run <task> -n`             | Dry run: print commands without running them        |
 | `stackctl run <task> -s`             | Silent: don't echo commands                         |
-| `stackctl list` (`ls`)               | List tasks, aliases and descriptions                |
 | `stackctl version` (`v`)             | Print version information                           |
 
 Global flag: `-f, --file <path>` uses a specific task file.
