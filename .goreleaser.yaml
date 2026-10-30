@@ -28,6 +28,9 @@ builds:
       - arm
       - ppc64le
       - s390x
+    ignore:
+      - goos: windows
+        goarch: arm
 
 upx:
   # Linux: amd64, arm64, 386
