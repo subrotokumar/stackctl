@@ -22,10 +22,6 @@ const (
 	bodyWrapWidth = 72
 )
 
-// ---------------------------------------------------------------------------
-// Commit types
-// ---------------------------------------------------------------------------
-
 type CommitTypeOption struct {
 	Key         string
 	Title       string
@@ -37,7 +33,6 @@ func newType(key, desc, semver string) CommitTypeOption {
 	return CommitTypeOption{Key: key, Title: key, Description: desc, SemVer: semver}
 }
 
-// AllowedTypes is the single source of truth for types AND their SemVer impact.
 var AllowedTypes = []CommitTypeOption{
 	newType("feat", "New feature for the user", "MINOR"),
 	newType("fix", "Bug fix for the user", "PATCH"),
@@ -67,10 +62,7 @@ var commonScopes = []string{
 	"db", "deps", "domain", "infra", "mobile", "ui", "web",
 }
 
-// ---------------------------------------------------------------------------
 // Imperative-mood detection
-// ---------------------------------------------------------------------------
-
 var baseVerbs = []string{
 	"add", "adjust", "align", "allow", "apply", "bump", "bypass", "change",
 	"clean", "configure", "copy", "correct", "create", "delete", "deploy",
@@ -140,10 +132,7 @@ func verbForms(v string) []string {
 	}
 }
 
-// ---------------------------------------------------------------------------
 // Regular expressions
-// ---------------------------------------------------------------------------
-
 var (
 	bulletRegex = regexp.MustCompile(`^(\s*[-*]\s+|\s*\d+\.\s+)`)
 
@@ -179,10 +168,7 @@ var canonicalTrailerKeys = map[string]string{
 	"change-id":      "Change-Id",
 }
 
-// ---------------------------------------------------------------------------
 // CLI flags
-// ---------------------------------------------------------------------------
-
 var (
 	commitDryRun       bool
 	commitAll          bool
@@ -238,10 +224,7 @@ either --dry-run (print only) or --yes (commit without prompts):
 	},
 }
 
-// ---------------------------------------------------------------------------
 // Commit model
-// ---------------------------------------------------------------------------
-
 type commitInput struct {
 	Type         string
 	Scope        string
@@ -320,10 +303,7 @@ func (in commitInput) Warnings() []string {
 	return w
 }
 
-// ---------------------------------------------------------------------------
 // Execution flows
-// ---------------------------------------------------------------------------
-
 func printBanner() {
 	if core.ShowLogo {
 		block := core.LogoStyle.Render(strings.Join([]string{"✨ Stackctl"}, "\n"))
@@ -704,10 +684,7 @@ func CalculateSemVer(commitType string, isBreaking bool) (bump string, descripti
 	}
 }
 
-// ---------------------------------------------------------------------------
 // Message assembly
-// ---------------------------------------------------------------------------
-
 func BuildCommitMessage(header, body string, footers []string) string {
 	var parts []string
 	if h := strings.TrimSpace(header); h != "" {
@@ -802,10 +779,7 @@ func wrapWords(words []string, first, cont string, limit int) []string {
 	return lines
 }
 
-// ---------------------------------------------------------------------------
 // Footers / trailers
-// ---------------------------------------------------------------------------
-
 func canonicalTrailerKey(k string) string {
 	if c, ok := canonicalTrailerKeys[strings.ToLower(k)]; ok {
 		return c
@@ -926,10 +900,7 @@ func ValidateOtherFooter(s string) error {
 	return err
 }
 
-// ---------------------------------------------------------------------------
 // Preview
-// ---------------------------------------------------------------------------
-
 func renderCommitPreview(in commitInput, fullMsg string) {
 	bump, bumpDesc := CalculateSemVer(in.Type, in.Breaking)
 	headerLen := utf8.RuneCountInString(in.Header())
@@ -976,10 +947,7 @@ func renderCommitPreview(in commitInput, fullMsg string) {
 	fmt.Println()
 }
 
-// ---------------------------------------------------------------------------
 // Git helpers
-// ---------------------------------------------------------------------------
-
 type stageMode int
 
 const (

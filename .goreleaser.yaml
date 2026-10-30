@@ -9,57 +9,43 @@ before:
 
 builds:
   - id: stackctl
-    main: ./...
+    main: .
+    binary: stackctl
     env:
       - CGO_ENABLED=0
     flags:
       - -trimpath
     ldflags:
-      - -s -w -X github.com/subrotokumar/stackctl/v5/cmd/core.Version=v{{.Version}}
-      - -s -w -X github.com/subrotokumar/stackctl/v5/cmd/core.Commit={{.Commit}}
-      - -s -w -X github.com/subrotokumar/stackctl/v5/cmd/core.Date={{.Date}}
-    goos:
-      - linux
-      - windows
-      - darwin
-    goarch:
-      - amd64
-      - arm64
-      - arm
-      - ppc64le
-      - s390x
-    ignore:
-      - goos: windows
-        goarch: arm
+      - -s -w
+      - -X github.com/subrotokumar/stackctl/v5/cmd/core.Version=v{{.Version}}
+      - -X github.com/subrotokumar/stackctl/v5/cmd/core.Commit={{.Commit}}
+      - -X github.com/subrotokumar/stackctl/v5/cmd/core.Date={{.Date}}
+    goos: [linux, windows, darwin]
+    goarch: [amd64, arm64]
 
 upx:
-  # Linux: amd64, arm64, 386
+  # UPX doesn't support windows/arm64 or darwin builds reliably
   - enabled: true
-    ids: [default]
+    ids: [stackctl]          # was "default", which matched nothing
     goos: [linux]
-    goarch: [amd64, arm64, "386"]
+    goarch: [amd64, arm64]
     compress: best
     lzma: true
 
-  # Windows: amd64, 386 (UPX doesn't support windows/arm64)
   - enabled: true
-    ids: [default]
+    ids: [stackctl]
     goos: [windows]
-    goarch: [amd64, "386"]
+    goarch: [amd64]
     compress: best
     lzma: true
 
 archives:
   - formats: [tar.gz]
-    # OS and arch names match the output of `uname`.
     name_template: >-
       {{ .ProjectName }}_
       {{- title .Os }}_
       {{- if eq .Arch "amd64" }}x86_64
-      {{- else if eq .Arch "386" }}i386
       {{- else }}{{ .Arch }}{{ end }}
-      {{- if .Arm }}v{{ .Arm }}{{ end }}
-    # Use zip for Windows archives.
     format_overrides:
       - goos: windows
         formats: [zip]
