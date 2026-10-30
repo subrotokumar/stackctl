@@ -15,7 +15,7 @@ curl -fsSL https://raw.githubusercontent.com/subrotokumar/stackctl/main/scripts/
 ```
 
 ```bash [Go]
-go install github.com/subrotokumar/stackctl/v4@latest
+go install github.com/subrotokumar/stackctl/v5@latest
 ```
 
 :::
