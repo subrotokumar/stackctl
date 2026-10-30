@@ -1,4 +1,4 @@
-# Stackctl: Project Initializr & Task Runner
+# Stackctl: Project Initializr, Task Runner & Conventional Commits
 
 <img src="./docs/public/spring.png" style="border-radius: 16px;" width="80"> &nbsp;&nbsp;
 <img src="./docs/public/quarkus.png" style="border-radius: 16px;" width="80"> &nbsp;&nbsp;
@@ -253,6 +253,50 @@ Select a task to run
 | First / last | g / G      |
 | Run     | Enter           |
 | Cancel  | Esc, q, Ctrl+C  |
+
+---
+
+## 📝 Conventional Commits
+
+Stackctl can help you write commit messages that follow the
+[Conventional Commits](https://www.conventionalcommits.org) specification:
+
+```
+<type>(<scope>): <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+### Usage
+
+```bash
+git add .
+stackctl commit
+```
+
+You will be prompted for:
+
+1. **Type**: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`
+2. **Scope** (optional): the area of the codebase affected, e.g. `api`
+3. **Description**: a short summary in the imperative mood
+4. **Body** (optional): more detail about the change
+5. **Breaking change** (optional): adds `!` and a `BREAKING CHANGE:` footer
+
+Example result:
+
+```
+feat(api): add pagination to list endpoint
+
+BREAKING CHANGE: response is now wrapped in a `data` field
+```
+
+### Why it matters
+
+Conventional commits keep history readable and make automated changelogs and
+versioning predictable. They also work well with the `changelog` filters in
+GoReleaser, e.g. excluding `docs:` and `test:` commits from release notes.
 
 ---
 
